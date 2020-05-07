@@ -1,5 +1,3 @@
-CREATE DATABASE BookStore;
-
 CREATE TABLE book (
 	id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	Title varchar(255) NOT NULL,
@@ -57,11 +55,10 @@ INSERT INTO store (name,neighborhood,commission) VALUES
 CREATE TABLE sale(
 	id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	Sale_date date NOT NULL,
-	Seller int NOT NULL REFERENCES store(store_id),
-	Customer int NOT NULL REFERENCES customer(customer_id),
-	Book int NOT NULL REFERENCES book(book_id),
-	Quantity int NOT NULL,
-	Sale_cost numeric NOT NULL
+	Seller int NOT NULL REFERENCES store(id),
+	Customer int NOT NULL REFERENCES customer(id),
+	Book int NOT NULL REFERENCES book(id),
+	Quantity int NOT NULL
 );
 
 INSERT INTO public.sale(sale_date, seller, customer, book, quantity)
@@ -102,8 +99,28 @@ $$ LANGUAGE plpgsql;
 
 CREATE VIEW sale_with_cost AS 
 	SELECT s.*,c.discount/100*(b.price+(b.price*store.commission/100)) AS sale_cost
-	FROM sale s JOIN book b ON s.book = b.book_id 
-				JOIN customer c ON s.customer = c.customer_id
+	FROM sale s JOIN book b ON s.book = b.id 
+				JOIN customer c ON s.customer = c.id
+					JOIN store ON s.seller = store.id;
+CREATE TRIGGER view_sale_update_tg
+    INSTEAD OF INSERT OR DELETE OR UPDATE 
+    ON public.sale_with_cost
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.update_sale_with_cost_view();
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+customer = c.customer_id
 					JOIN store ON s.seller = store.store_id;
 CREATE TRIGGER view_sale_update_tg
     INSTEAD OF INSERT OR DELETE OR UPDATE 
