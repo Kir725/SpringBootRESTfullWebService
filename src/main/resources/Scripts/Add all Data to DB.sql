@@ -118,25 +118,6 @@ CREATE TRIGGER view_sale_update_tg
 
 
 
- 
-
-customer = c.customer_id
-					JOIN store ON s.seller = store.store_id;
-CREATE TRIGGER view_sale_update_tg
-    INSTEAD OF INSERT OR DELETE OR UPDATE 
-    ON public.sale_with_cost
-    FOR EACH ROW
-    EXECUTE PROCEDURE public.update_sale_with_cost_view();
-
-
-
-
-
-
-
-
-
-
 
 
  

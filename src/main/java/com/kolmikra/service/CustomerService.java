@@ -29,5 +29,4 @@ public class CustomerService extends AbstractService<Customer, CustomerRepositor
                         object -> ((Number) object[1]).doubleValue()
                 ));
     }
-
 }
