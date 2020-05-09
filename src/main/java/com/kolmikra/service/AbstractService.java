@@ -1,5 +1,10 @@
 package com.kolmikra.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.kolmikra.exception.NoSuchItemException;
 import com.kolmikra.model.AbstractEntity;
 import com.kolmikra.repository.CommonRepository;
@@ -12,6 +17,7 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
 
     @Autowired
     R repository;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public List<E> findAll() {
@@ -19,8 +25,8 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
     }
 
     @Override
-    public Optional<E> findById(int id) {
-        return repository.findById(id);
+    public E findById(int id) throws NoSuchItemException {
+        return repository.findById(id).orElseThrow(NoSuchItemException::new);
     }
 
     @Override
@@ -45,5 +51,21 @@ public abstract class AbstractService<E extends AbstractEntity, R extends Common
             return entity;
         }
         throw new NoSuchItemException();
+    }
+
+    @Override
+    public E patch(int id, JsonPatch patch) throws NoSuchItemException, JsonPatchException, JsonProcessingException {
+        E entity = repository.findById(id).orElseThrow(NoSuchItemException::new);
+        E entityPatched = applyPatchToEntity(patch, entity);
+        updateById(id, entityPatched);
+        return entityPatched;
+    }
+
+    @SuppressWarnings("unchecked")
+    private E applyPatchToEntity(
+            JsonPatch patch, E targetEntity) throws JsonPatchException, JsonProcessingException {
+        JsonNode patched = patch.apply(objectMapper.convertValue(targetEntity, JsonNode.class));
+
+        return objectMapper.treeToValue(patched, (Class<E>) targetEntity.getClass());
     }
 }

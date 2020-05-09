@@ -32,7 +32,7 @@ public abstract class AbstractController<E extends AbstractEntity, S extends Com
     @GetMapping("/find")
     public ResponseEntity<E> findById(@RequestParam int id) {
         try {
-            E entity = service.findById(id).orElseThrow(NoSuchItemException::new);
+            E entity = service.findById(id);
             return ResponseEntity.ok(entity);
         } catch (NoSuchItemException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -68,9 +68,7 @@ public abstract class AbstractController<E extends AbstractEntity, S extends Com
     @PatchMapping(path = "/patch/{id}", consumes = "application/json-patch+json")
     public ResponseEntity<E> patch(@PathVariable int id, @RequestBody JsonPatch patch) {
         try {
-            E entity = service.findById(id).orElseThrow(NoSuchItemException::new);
-            E entityPatched = applyPatchToEntity(patch, entity);
-            service.updateById(id, entityPatched);
+            E entityPatched = service.patch(id, patch);
             return ResponseEntity.ok(entityPatched);
         } catch (JsonPatchException | JsonProcessingException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -78,13 +76,4 @@ public abstract class AbstractController<E extends AbstractEntity, S extends Com
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-
-    private E applyPatchToEntity(
-            JsonPatch patch, E targetEntity) throws JsonPatchException, JsonProcessingException {
-        JsonNode patched = patch.apply(objectMapper.convertValue(targetEntity, JsonNode.class));
-
-        return objectMapper.treeToValue(patched, getEType());
-    }
-
-    public abstract Class<E> getEType();
 }

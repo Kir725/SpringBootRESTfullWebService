@@ -4,6 +4,9 @@ import com.kolmikra.model.Book;
 import com.kolmikra.model.Sale;
 import com.kolmikra.model.Store;
 import com.kolmikra.service.SaleService;
+import com.kolmikra.view.CustomerSecondNameAndStoreTitleView;
+import com.kolmikra.view.MonthView;
+import com.kolmikra.view.SaleView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +22,13 @@ public class SaleController extends AbstractController<Sale, SaleService> {
     SaleService saleService;
 
     @GetMapping("/monthsOfSale")
-    public List<String> getMonthsOfSale(){
+    public List<MonthView> getMonthsOfSale(){
         return saleService.monthsOfSale();
     }
 
     @GetMapping("/getSecNameAndShopTitle")
-    public ResponseEntity<List<Object[]>> getSecNameAndShopTitle(){
-        List<Object[]> result = saleService.getSecNameAndTitleForSale();
+    public ResponseEntity<List<CustomerSecondNameAndStoreTitleView>> getSecNameAndShopTitle(){
+        List<CustomerSecondNameAndStoreTitleView> result = saleService.getSecNameAndTitleForSale();
         if(!result.isEmpty()){
             return ResponseEntity.ok(result);
         }
@@ -33,8 +36,8 @@ public class SaleController extends AbstractController<Sale, SaleService> {
     }
 
     @GetMapping("/getSacNameDateDiscountBookTitleAndQuantity")
-    public ResponseEntity<List<Object[]>> getSacNameDateDiscountBookTitleAndQuantity(){
-        List<Object[]> result = saleService.getSacNameDateDiscountBookTitleAndQuantity();
+    public ResponseEntity<List<SaleView>> getSacNameDateDiscountBookTitleAndQuantity(){
+        List<SaleView> result = saleService.getSacNameDateDiscountBookTitleAndQuantity();
         if(!result.isEmpty()){
             return ResponseEntity.ok(result);
         }
@@ -42,8 +45,8 @@ public class SaleController extends AbstractController<Sale, SaleService> {
     }
 
     @GetMapping("/getSaleIdCustomerAndDateForSaleCost")
-    public ResponseEntity<List<Object[]>> getSaleIdCustomerAndDateForSaleCost(@RequestParam double saleCostLevel){
-        List<Object[]> result = saleService.getSaleIdCustomerAndDateForSaleCost(saleCostLevel);
+    public ResponseEntity<List<SaleView>> getSaleIdCustomerAndDateForSaleCost(@RequestParam double saleCostLevel){
+        List<SaleView> result = saleService.getSaleIdCustomerAndDateForSaleCost(saleCostLevel);
         if(!result.isEmpty()){
             return ResponseEntity.ok(result);
         }
@@ -51,8 +54,8 @@ public class SaleController extends AbstractController<Sale, SaleService> {
     }
 
     @GetMapping("/getSaleInCustomerNeighborhoodForMonth")
-    public ResponseEntity<List<Object[]>> getSaleInCustomerNeighborhoodForMonth(@RequestParam int monthNumber) {
-        List<Object[]> result = saleService.getSaleInCustomerNeighborhoodForMonth(monthNumber);
+    public ResponseEntity<List<SaleView>> getSaleInCustomerNeighborhoodForMonth(@RequestParam int monthNumber) {
+        List<SaleView> result = saleService.getSaleInCustomerNeighborhoodForMonth(monthNumber);
         if (!result.isEmpty()) {
             return ResponseEntity.ok(result);
         }
@@ -75,11 +78,6 @@ public class SaleController extends AbstractController<Sale, SaleService> {
             return ResponseEntity.ok(result);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @Override
-    public Class<Sale> getEType() {
-        return Sale.class;
     }
 
 }

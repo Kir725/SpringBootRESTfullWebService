@@ -7,6 +7,9 @@ import com.kolmikra.model.Sale;
 import com.kolmikra.model.Store;
 import com.kolmikra.repository.CustomerRepository;
 import com.kolmikra.repository.SaleRepository;
+import com.kolmikra.view.CustomerSecondNameAndStoreTitleView;
+import com.kolmikra.view.MonthView;
+import com.kolmikra.view.SaleView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,23 +23,23 @@ public class SaleService extends AbstractService<Sale, SaleRepository> {
     @Autowired
     private SaleRepository saleRepository;
 
-    public List<String> monthsOfSale() {
+    public List<MonthView> monthsOfSale() {
         return saleRepository.monthsOfSale();
     }
 
-    public List<Object[]> getSecNameAndTitleForSale() {
+    public List<CustomerSecondNameAndStoreTitleView> getSecNameAndTitleForSale() {
         return saleRepository.getSecNameAndTitleForSale();
     }
 
-    public List<Object[]> getSacNameDateDiscountBookTitleAndQuantity() {
+    public List<SaleView> getSacNameDateDiscountBookTitleAndQuantity() {
         return saleRepository.getSacNameDateDiscountBookTitleAndQuantity();
     }
 
-    public List<Object[]> getSaleIdCustomerAndDateForSaleCost(double saleCostLevel) {
+    public List<SaleView> getSaleIdCustomerAndDateForSaleCost(double saleCostLevel) {
         return saleRepository.getSaleIdCustomerAndDateForSaleCost(saleCostLevel);
     }
 
-    public List<Object[]> getSaleInCustomerNeighborhoodForMonth(int monthNumber) {
+    public List<SaleView> getSaleInCustomerNeighborhoodForMonth(int monthNumber) {
         return saleRepository.getSaleInCustomerNeighborhoodForMonth(monthNumber);
     }
 

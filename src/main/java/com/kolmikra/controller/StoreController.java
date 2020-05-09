@@ -2,6 +2,7 @@ package com.kolmikra.controller;
 
 import com.kolmikra.model.Store;
 import com.kolmikra.service.StoreService;
+import com.kolmikra.view.StoreTitleView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,17 +18,13 @@ public class StoreController extends AbstractController<Store, StoreService> {
     StoreService storeService;
 
     @GetMapping("/getStoreTitleByNeighborhood")
-    public ResponseEntity<List<String>> getStoreTitleByNeighborhood(@RequestParam String firstNeighborhood,
+    public ResponseEntity<List<StoreTitleView>> getStoreTitleByNeighborhood(@RequestParam String firstNeighborhood,
                                                                     String secondNeighborhood) {
-        List<String> result = storeService.getStoreNameByNeighborhood(firstNeighborhood, secondNeighborhood);
+        List<StoreTitleView> result = storeService.getStoreNameByNeighborhood(firstNeighborhood, secondNeighborhood);
         if (!result.isEmpty()) {
             return ResponseEntity.ok(result);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @Override
-    public Class<Store> getEType() {
-        return Store.class;
-    }
 }
